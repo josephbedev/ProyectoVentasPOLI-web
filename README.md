@@ -1,10 +1,10 @@
-# Proyecto Ventas POLI — Entrega 2
+# Proyecto Ventas POLI — Versión web (Entrega 2 y Entrega final)
 
 **Grupo 14 · Herramientas de Programación Móvil**
 
-Primera versión web de las mejoras propuestas para el proyecto Ventas POLI, desarrollada con **HTML, CSS, JavaScript y la librería jQuery**. Se visualiza en cualquier navegador abriendo `index.html`, sin instalar software adicional (no requiere Boca ni servidor).
+Primera versión web de las mejoras propuestas para el proyecto Ventas POLI, desarrollada con **HTML, CSS, JavaScript y la librería jQuery**. Se visualiza en cualquier navegador abriendo `index.html`, sin instalar software adicional (no requiere servidor).
 
-🔗 **Sitio publicado:** https://areiza-zenith.github.io/ProyectoVentasPOLI-web/
+🔗 **Sitio publicado:** https://josephbedev.github.io/ProyectoVentasPOLI-web/
 
 ---
 
@@ -20,15 +20,25 @@ En la Entrega 1 la clase Java `GenerateInfoFiles` generaba archivos planos pseud
 
 Las ventas siempre referencian productos que existen en la lista de productos generada.
 
+## Entrega final
+
+En la entrega final se completó la clase `Main` en Java (repositorio [ProyectoVentasPOLI](https://github.com/josephbedev/ProyectoVentasPOLI)), que lee los archivos y genera los reportes. Esta versión web se actualizó para ofrecer los mismos dos reportes:
+
+| Reporte | Orden | Formato |
+|---|---|---|
+| `reporte_vendedores.csv` | Dinero recaudado, de mayor a menor | `NombresApellidos;TotalRecaudado` |
+| `reporte_productos.csv` | Cantidad vendida, de mayor a menor | `NombreProducto;PrecioPorUnidad` |
+
 ---
 
 ## Funcionalidades
 
-- **Resumen** (`index.html`): tarjetas con totales, mejor vendedor y ranking de vendedores por valor vendido.
-- **Productos** (`productos.html`): tabla con búsqueda en vivo, ordenamiento por columna y descarga de `productos.txt`.
+- **Resumen** (`index.html`): tarjetas con totales, mejor vendedor, ranking de vendedores por valor vendido y ranking de productos por unidades vendidas. Cada ranking se descarga como CSV (`reporte_vendedores.csv` y `reporte_productos.csv`) con el mismo formato que genera la clase `Main` en Java.
+- **Productos** (`productos.html`): tabla con unidades vendidas, búsqueda en vivo, ordenamiento por columna (con indicador ▲/▼) y descarga de `productos.txt`.
 - **Vendedores** (`vendedores.html`): tabla con búsqueda en vivo, ordenamiento por columna y descarga de `vendedores.txt`.
 - **Ventas** (`ventas.html`): selector de vendedor, detalle de ventas con subtotales, total y descarga de su archivo de ventas.
 - **Regenerar datos**: botón disponible en todas las páginas que crea un conjunto nuevo de datos pseudoaleatorios.
+- **Validaciones**: si los datos guardados están dañados o incompletos se regeneran; se descartan ventas de productos inexistentes o con cantidad no válida; si el navegador no permite `localStorage`, se muestra un aviso y la página sigue funcionando.
 - **Diseño responsive** y **modo oscuro automático** según la preferencia del sistema.
 
 ---
@@ -120,6 +130,10 @@ var full  = function (v) { return v.nombres + ' ' + v.apellidos; };
 
 **`prod(id)` y `total(doc)`.** Buscan un producto por su ID (`$.grep`) y calculan las unidades y el valor total vendido por un vendedor (`$.each`).
 
+**`validar(d)`.** Revisa que los datos leídos de `localStorage` tengan la estructura esperada y filtra con `$.grep` los productos, vendedores y ventas inválidos. Si no queda nada útil, se regeneran.
+
+**`unidadesPorProducto()` y `rankingProductos()`.** Suman las unidades vendidas de cada producto entre todos los vendedores y ordenan de mayor a menor.
+
 **`descargar(nombre, texto)`.** Crea un enlace con `$('<a>')`, le asigna un `Blob` con `.attr()`, lo agrega con `.appendTo('body')`, le da clic por código y lo elimina con `.remove()`.
 
 **`tabla(rows, cols, fmt)`.** Construye las filas HTML con `$.each` y las inserta con `.html()`; si no hay resultados muestra "Sin resultados".
@@ -131,7 +145,7 @@ var full  = function (v) { return v.nombres + ' ' + v.apellidos; };
 
 **Lógica por página.** Cada bloque `if (page === '...')` se ejecuta solo en su página:
 
-- **Resumen:** `$.map` calcula el total por vendedor, se ordena para obtener el ranking y las tarjetas aparecen con `.delay()` y `.fadeIn()`.
+- **Resumen:** `rankingVendedores()` y `rankingProductos()` calculan y ordenan los dos rankings; las tarjetas aparecen con `.delay()` y `.fadeIn()`, y los botones generan los CSV con `csvVendedores()` y `csvProductos()`.
 - **Productos / Vendedores:** usan `listado()` y un botón que arma el archivo `.txt` con `$.map(...).join('\n')`.
 - **Ventas:** `.on('change')` en el selector redibuja la tabla y el total; `.trigger('change')` lo dispara al inicio para no dejar la tabla vacía.
 - **Regenerar datos:** `generar()` y `location.reload()`.

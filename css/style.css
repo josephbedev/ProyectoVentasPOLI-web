@@ -18,3 +18,6 @@ th[data-k]{cursor:pointer}th[data-k]:hover{color:var(--ac)}
 tbody tr:hover{background:rgba(31,79,216,.08)}.total{font-weight:600}
 footer{text-align:center;padding:24px;opacity:.6;font-size:.85rem}
 @media(max-width:600px){th,td{padding:8px 6px;font-size:.9rem}}
+.tit{align-items:center;justify-content:space-between;margin-top:28px}.tit h3{margin:0}
+th.asc::after{content:' ▲';font-size:.7em}th.desc::after{content:' ▼';font-size:.7em}
+.aviso{background:#fff4d6;color:#6b4b00;border:1px solid #f0d58a;padding:10px 14px;border-radius:8px}
